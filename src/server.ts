@@ -20,7 +20,7 @@ app.get('/health/db', async () => {
 })
 
 // rotas principais
-app.register(orderRoutes, { prefix: '/orders' })
+app.register(orderRoutes, { prefix: '/api/orders' })
 app.register(checkinRoutes, { prefix: '/api/checkin' })
 app.register(fastifyStatic, {
   root: path.join(__dirname, '../public'),

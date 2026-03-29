@@ -27,7 +27,7 @@ document.getElementById('formVenda').addEventListener('submit', async (e) => {
     quantidade: Number(form.get('quantidade'))
   };
 
-  const res = await fetch('/api/tickets', {
+  const res = await fetch('/api/orders', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
