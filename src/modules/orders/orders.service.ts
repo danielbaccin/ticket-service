@@ -1,5 +1,6 @@
 import { pool } from '../../db/pool'
 import { randomUUID } from 'crypto'
+import { generateQRCode } from '../qr.service'
 
 export async function createOrder(data: any) {
   const client = await pool.connect()
@@ -41,7 +42,14 @@ export async function createOrder(data: any) {
         [randomUUID(), ticketId]
       )
 
-      tickets.push({ ticketId, code })
+      const qr = await generateQRCode(code)
+
+      tickets.push({
+        ticketId,
+        code,
+        qr
+      })
+      
     }
 
     await client.query('COMMIT')
