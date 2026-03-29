@@ -1,0 +1,45 @@
+<form id="formVenda">
+  <input type="text" name="nome" placeholder="Nome" required />
+  <input type="email" name="email" placeholder="Email" required />
+  <input type="text" name="telefone" placeholder="WhatsApp" required />
+
+  <select name="tipo">
+    <option value="INTEIRA">Inteira</option>
+    <option value="MEIA">Meia</option>
+  </select>
+
+  <input type="number" name="quantidade" value="1" min="1" />
+
+  <button type="submit">Reservar ingresso</button>
+</form>
+
+<script>
+document.getElementById('formVenda').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const form = new FormData(e.target);
+
+  const data = {
+    nome: form.get('nome'),
+    email: form.get('email'),
+    telefone: form.get('telefone'),
+    tipo: form.get('tipo'),
+    quantidade: Number(form.get('quantidade'))
+  };
+
+  const res = await fetch('/api/tickets', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  });
+
+  const json = await res.json();
+
+  if (res.ok) {
+    alert('Ingresso reservado com sucesso!');
+    e.target.reset();
+  } else {
+    alert('Erro ao salvar');
+  }
+});
+</script>

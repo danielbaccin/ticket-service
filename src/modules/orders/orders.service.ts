@@ -13,7 +13,7 @@ export async function createOrder(data: any) {
 
     await client.query(
       `INSERT INTO orders (id, event_id, buyer_name, buyer_email, status)
-       VALUES ($1, $2, $3, $4, 'PAID')`,
+       VALUES ($1, $2, $3, $4, 'PENDING')`,
       [orderId, data.event_id, data.buyer_name, data.buyer_email]
     )
 
@@ -21,11 +21,11 @@ export async function createOrder(data: any) {
 
     for (const t of data.tickets) {
       const ticketId = randomUUID()
-      const code = Math.random().toString(36).substring(2, 10)
+      const code = randomUUID().slice(0, 8)
 
       await client.query(
         `INSERT INTO tickets (id, event_id, order_id, ticket_type_id, code, holder_name, status)
-         VALUES ($1, $2, $3, $4, $5, $6, 'VALID')`,
+         VALUES ($1, $2, $3, $4, $5, $6, 'PENDING')`,
         [
           ticketId,
           data.event_id,
@@ -36,12 +36,12 @@ export async function createOrder(data: any) {
         ]
       )
 
-      // fila de envio
-      await client.query(
-        `INSERT INTO delivery_queue (id, ticket_id, channel, status)
-         VALUES ($1, $2, 'EMAIL', 'PENDING')`,
-        [randomUUID(), ticketId]
-      )
+      // // fila de envio
+      // await client.query(
+      //   `INSERT INTO delivery_queue (id, ticket_id, channel, status)
+      //    VALUES ($1, $2, 'EMAIL', 'PENDING')`,
+      //   [randomUUID(), ticketId]
+      // )
 
       const qr = await generateQRCode(code)
 
