@@ -4,7 +4,6 @@ import { pool } from './db/pool'
 
 const app = Fastify({ logger: true })
 
-// rotas
 app.register(orderRoutes, { prefix: '/orders' })
 
 app.get('/health', async () => {
@@ -12,9 +11,20 @@ app.get('/health', async () => {
   return { ok: true, db: result.rows }
 })
 
-// subir servidor (SEMPRE por último)
-const port = Number(process.env.PORT) || 3000
+const start = async () => {
+  try {
+    const port = Number(process.env.PORT) || 3000
 
-app.listen({ port, host: '0.0.0.0' }).then(() => {
-  console.log(`🚀 Server rodando na porta ${port}`)
-}) 
+    await app.listen({
+      port,
+      host: '0.0.0.0'
+    })
+
+    console.log(`🚀 Server rodando na porta ${port}`)
+  } catch (err) {
+    app.log.error(err)
+    process.exit(1)
+  }
+}
+
+start()
