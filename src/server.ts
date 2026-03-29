@@ -1,14 +1,13 @@
 import Fastify from 'fastify'
-import { orderRoutes } from './modules/orders/orders.controller'
-import { pool } from './db/pool'
 
 const app = Fastify({ logger: true })
 
-app.register(orderRoutes, { prefix: '/orders' })
+app.get('/', async () => {
+  return { ok: true }
+})
 
 app.get('/health', async () => {
-  const result = await pool.query('SELECT 1')
-  return { ok: true, db: result.rows }
+  return { ok: true }
 })
 
 const start = async () => {
