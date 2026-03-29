@@ -4,6 +4,7 @@ import { pool } from './db/pool'
 import { checkinRoutes } from './modules/checkin/checkin.controller'
 import fastifyStatic from '@fastify/static'
 import path from 'path'
+import { ticketTypesRoutes } from './modules/ticket-types/ticket-types.controller'
 
 const app = Fastify({ logger: true })
 
@@ -25,6 +26,7 @@ app.register(checkinRoutes, { prefix: '/api/checkin' })
 app.register(fastifyStatic, {
   root: path.join(__dirname, '../public'),
 })
+app.register(ticketTypesRoutes, { prefix: '/api/ticket-types' })
 
 // start
 const start = async () => {
