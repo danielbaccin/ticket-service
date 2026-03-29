@@ -1,7 +1,7 @@
 import Fastify from 'fastify'
 import { orderRoutes } from './modules/orders/orders.controller'
 import { pool } from './db/pool'
-import { checkinRoutes } from './modules/orders/checkin.controller'
+import { checkinRoutes } from './modules/checkin/checkin.controller'
 
 const app = Fastify({ logger: true })
 

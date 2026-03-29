@@ -59,3 +59,15 @@ export async function checkin(code: string) {
     client.release()
   }
 }
+
+export async function getTicketByCode(code: string) {
+  const result = await pool.query(
+    `SELECT t.*, tt.name as type
+     FROM tickets t
+     JOIN ticket_types tt ON tt.id = t.ticket_type_id
+     WHERE t.code = $1`,
+    [code]
+  )
+
+  return result.rows[0]
+}
