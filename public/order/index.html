@@ -1,45 +1,148 @@
-<form id="formVenda">
-  <input type="text" name="nome" placeholder="Nome" required />
-  <input type="email" name="email" placeholder="Email" required />
-  <input type="text" name="telefone" placeholder="WhatsApp" required />
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Comprar Ingresso</title>
 
-  <select name="tipo">
-    <option value="INTEIRA">Inteira</option>
-    <option value="MEIA">Meia</option>
-  </select>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
 
-  <input type="number" name="quantidade" value="1" min="1" />
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
 
-  <button type="submit">Reservar ingresso</button>
-</form>
+    .card {
+      background: #111827;
+      padding: 30px;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
 
-<script>
-document.getElementById('formVenda').addEventListener('submit', async (e) => {
-  e.preventDefault();
+    h1 {
+      margin-bottom: 20px;
+      font-size: 22px;
+      text-align: center;
+    }
 
-  const form = new FormData(e.target);
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: none;
+      background: #1f2937;
+      color: white;
+      font-size: 14px;
+    }
 
-  const data = {
-    nome: form.get('nome'),
-    email: form.get('email'),
-    telefone: form.get('telefone'),
-    tipo: form.get('tipo'),
-    quantidade: Number(form.get('quantidade'))
-  };
+    input::placeholder {
+      color: #9ca3af;
+    }
 
-  const res = await fetch('/api/orders', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data)
-  });
+    button {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background: #22c55e;
+      color: #052e16;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
 
-  const json = await res.json();
+    button:hover {
+      background: #16a34a;
+    }
 
-  if (res.ok) {
-    alert('Ingresso reservado com sucesso!');
-    e.target.reset();
-  } else {
-    alert('Erro ao salvar');
-  }
-});
-</script>
+    .success {
+      margin-top: 12px;
+      text-align: center;
+      color: #4ade80;
+      font-size: 14px;
+    }
+
+    .error {
+      margin-top: 12px;
+      text-align: center;
+      color: #f87171;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>🎟️ Comprar ingresso</h1>
+
+    <form id="formVenda">
+      <input name="buyer_name" placeholder="Seu nome" required />
+      <input name="buyer_email" type="email" placeholder="Seu email" required />
+      <input name="telefone" placeholder="WhatsApp" required />
+
+      <select name="ticket_type_id">
+        <option value="1">Inteira</option>
+        <option value="2">Meia</option>
+      </select>
+
+      <input type="number" name="quantidade" value="1" min="1" />
+
+      <button type="submit">Reservar ingresso</button>
+    </form>
+
+    <div id="msg"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById('formVenda');
+    const msg = document.getElementById('msg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      msg.innerHTML = '';
+
+      const formData = new FormData(form);
+
+      const data = {
+        event_id: "11111111-1111-1111-1111-111111111111",
+        buyer_name: formData.get('buyer_name'),
+        buyer_email: formData.get('buyer_email'),
+        tickets: Array.from({ length: Number(formData.get('quantidade')) }).map(() => ({
+          ticket_type_id: formData.get('ticket_type_id'),
+          holder_name: formData.get('buyer_name')
+        }))
+      };
+
+      try {
+        const res = await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (!res.ok) throw new Error();
+
+        msg.innerHTML = '<div class="success">Ingresso reservado com sucesso 🎉</div>';
+        form.reset();
+
+      } catch (err) {
+        msg.innerHTML = '<div class="error">Erro ao criar pedido</div>';
+      }
+    });
+  </script>
+
+</body>
+</html>
