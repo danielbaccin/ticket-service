@@ -1,6 +1,6 @@
 import { pool } from '../../db/pool'
 import { randomUUID } from 'crypto'
-import { generateQRCode } from './qr.service'
+import { generateQRCode } from '../../shared/qr.service'
 
 
 export async function createOrder(data: any) {
