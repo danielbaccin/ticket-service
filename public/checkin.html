@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Check-in</title>
+
+  <script src="https://unpkg.com/html5-qrcode"></script>
+
+  <style>
+    body { font-family: Arial; text-align: center; }
+    #reader { width: 300px; margin: auto; }
+    .ok { color: green; }
+    .error { color: red; }
+    button { padding: 12px; font-size: 16px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+  <h2>🎫 Check-in</h2>
+
+  <div id="reader"></div>
+
+  <div id="result"></div>
+
+  <button id="confirmBtn" style="display:none;">Confirmar entrada</button>
+
+  <script>
+    const API = "https://ticket-service-nodejs.v1aaan.easypanel.host"
+
+    let currentCode = null
+
+    function onScanSuccess(decodedText) {
+      currentCode = decodedText.split('/').pop()
+
+      fetch(`${API}/checkin/${currentCode}`)
+        .then(res => res.json())
+        .then(data => {
+          const resultDiv = document.getElementById('result')
+
+          if (!data.valid) {
+            resultDiv.innerHTML = `<p class="error">${data.message}</p>`
+            document.getElementById('confirmBtn').style.display = 'none'
+            return
+          }
+
+          resultDiv.innerHTML = `
+            <p class="ok">✔ ${data.name}</p>
+            <p>${data.type}</p>
+          `
+
+          document.getElementById('confirmBtn').style.display = 'block'
+        })
+    }
+
+    const html5QrCode = new Html5Qrcode("reader")
+
+    Html5Qrcode.getCameras().then(devices => {
+      html5QrCode.start(
+        devices[0].id,
+        { fps: 10, qrbox: 250 },
+        onScanSuccess
+      )
+    })
+
+    document.getElementById('confirmBtn').onclick = () => {
+      fetch(`${API}/checkin/confirm`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer 123'
+        },
+        body: JSON.stringify({ code: currentCode })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('result').innerHTML =
+          `<p class="ok">${data.message}</p>`
+
+        document.getElementById('confirmBtn').style.display = 'none'
+      })
+    }
+  </script>
+
+</body>
+</html>

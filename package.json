@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/danielbaccin/ticket-service#readme",
   "dependencies": {
+    "@fastify/static": "^9.0.0",
     "dotenv": "^17.3.1",
     "fastify": "^5.8.4",
     "pg": "^8.20.0",

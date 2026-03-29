@@ -1,3 +1,10 @@
 node_modules
 dist
 .env
+...]]
+11.12.1
+[--include
+[stage-0
+ticket-service@1.0.0
+tsc
+

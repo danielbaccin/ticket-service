@@ -2,6 +2,8 @@ import Fastify from 'fastify'
 import { orderRoutes } from './modules/orders/orders.controller'
 import { pool } from './db/pool'
 import { checkinRoutes } from './modules/checkin/checkin.controller'
+import fastifyStatic from '@fastify/static'
+import path from 'path'
 
 const app = Fastify({ logger: true })
 
@@ -20,6 +22,9 @@ app.get('/health/db', async () => {
 // rotas principais
 app.register(orderRoutes, { prefix: '/orders' })
 app.register(checkinRoutes, { prefix: '/checkin' })
+app.register(fastifyStatic, {
+  root: path.join(__dirname, '../public'),
+})
 
 // start
 const start = async () => {
