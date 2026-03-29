@@ -126,10 +126,7 @@
         <input name="buyer_email" type="email" placeholder="Seu email" required />
         <input name="telefone" placeholder="WhatsApp" required />
 
-        <select name="ticket_type_id">
-          <option value="1">Inteira</option>
-          <option value="2">Meia</option>
-        </select>
+        <select name="ticket_type_id"></select>
 
         <input type="number" name="quantidade" value="1" min="1" />
 
@@ -221,6 +218,19 @@
         msg.innerHTML = '<div class="error">Erro ao criar pedido</div>';
       }
     });
+
+    async function loadTicketTypes() {
+      const res = await fetch('/api/ticket-types');
+      const types = await res.json();
+
+      const select = document.querySelector('[name="ticket_type_id"]');
+
+      select.innerHTML = types.map(t => `
+        <option value="${t.id}">${t.name}</option>
+      `).join('');
+    }
+
+    loadTicketTypes();
   </script>
 
 
