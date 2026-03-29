@@ -13,6 +13,8 @@ app.get('/health', async () => {
 })
 
 // subir servidor (SEMPRE por último)
-app.listen({ port: 3000 }).then(() => {
-  console.log('🚀 Server rodando na porta 3000')
-})
+const port = Number(process.env.PORT) || 3000
+
+app.listen({ port, host: '0.0.0.0' }).then(() => {
+  console.log(`🚀 Server rodando na porta ${port}`)
+}) 
