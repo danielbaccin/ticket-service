@@ -11,8 +11,8 @@
     }
 
     body {
-      margin: 0;
-      background: linear-gradient(
+    margin: 0;
+    background: linear-gradient(
         180deg,
         #020617 0%,
         #0f172a 40%,
@@ -20,12 +20,7 @@
       );
       color: #fff;
 
-      display: flex;
-      justify-content: center;
-      align-items: flex-start; /* 👈 muda isso */
-
       min-height: 100vh;
-      padding: 40px 16px; /* 👈 espaçamento topo + lateral */
     }
 
     .card {
@@ -90,6 +85,11 @@
       font-size: 14px;
     }
     @media (max-width: 480px) {
+    .container {
+      align-items: flex-start; /* 👈 melhor no mobile */
+      padding-top: 32px;
+    }
+
     .card {
       padding: 20px;
     }
@@ -106,40 +106,43 @@
     }
   }
   .container {
-    width: 100%;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
+    align-items: center; /* 👈 centraliza bonito */
+    padding: 20px;
   }
   </style>
 </head>
 <body>
 
-  <div class="card">
-    <img src="/logo.png" alt="Logo" style="width: 80px; display: block; margin: 0 auto 12px;" />
-    <h1>🎟️ Comprar ingresso</h1>
+  <div class="container">
+    <div class="card">
+      <img src="/logo.png" alt="Logo" style="width: 80px; display: block; margin: 0 auto 12px;" />
+      <h1>🎟️ Comprar ingresso</h1>
 
-    <form id="formVenda">
-      <input name="buyer_name" placeholder="Seu nome" required />
-      <input name="buyer_email" type="email" placeholder="Seu email" required />
-      <input name="telefone" placeholder="WhatsApp" required />
+      <form id="formVenda">
+        <input name="buyer_name" placeholder="Seu nome" required />
+        <input name="buyer_email" type="email" placeholder="Seu email" required />
+        <input name="telefone" placeholder="WhatsApp" required />
 
-      <select name="ticket_type_id">
-        <option value="1">Inteira</option>
-        <option value="2">Meia</option>
-      </select>
+        <select name="ticket_type_id">
+          <option value="1">Inteira</option>
+          <option value="2">Meia</option>
+        </select>
 
-      <input type="number" name="quantidade" value="1" min="1" />
+        <input type="number" name="quantidade" value="1" min="1" />
 
-      <div id="total" style="margin-bottom: 12px; font-size: 14px;"></div>
-      <button id="btnSubmit" type="submit">Reservar ingresso</button>
-    </form>
-    <div id="msg"></div>
-    <div class="container">
-      <div class="card">
-        ...
-      </div>
+        <div id="total" style="margin-bottom: 12px; font-size: 14px;"></div>
+
+        <button id="btnSubmit" type="submit">Reservar ingresso</button>
+      </form>
+
+      <div id="msg"></div>
     </div>
   </div>
+
+</body>
 
   <script>
     const form = document.getElementById('formVenda');
@@ -220,5 +223,5 @@
     });
   </script>
 
-</body>
+
 </html>
