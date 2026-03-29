@@ -7,11 +7,48 @@
   <script src="https://unpkg.com/html5-qrcode"></script>
 
   <style>
-    body { font-family: Arial; text-align: center; }
-    #reader { width: 300px; margin: auto; }
-    .ok { color: green; }
-    .error { color: red; }
-    button { padding: 12px; font-size: 16px; margin-top: 10px; }
+  body {
+    font-family: Arial;
+    text-align: center;
+    background: #0f172a;
+    color: white;
+    padding: 20px;
+  }
+
+  #reader {
+    width: 100%;
+    max-width: 320px;
+    margin: auto;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .card {
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .ok {
+    background: #065f46;
+    color: #10b981;
+  }
+
+  .error {
+    background: #7f1d1d;
+    color: #ef4444;
+  }
+
+  button {
+    width: 100%;
+    padding: 14px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    background: #10b981;
+    color: black;
+    margin-top: 12px;
+  }
   </style>
 </head>
 <body>
@@ -28,24 +65,38 @@
     const API = "https://ticket-service-nodejs.v1aaan.easypanel.host/api/checkin"
 
     let currentCode = null
+    let scanning = true
 
     function onScanSuccess(decodedText) {
+      if (!scanning) return
+        scanning = false
+      
+      setTimeout(() => scanning = true, 2000)
       currentCode = decodedText.split('/').pop()
 
-      fetch(`${API}/checkin/${currentCode}`)
+      fetch(`${API}/${currentCode}`)
         .then(res => res.json())
         .then(data => {
           const resultDiv = document.getElementById('result')
 
           if (!data.valid) {
-            resultDiv.innerHTML = `<p class="error">${data.message}</p>`
+            feedbackError()
+
+            resultDiv.innerHTML = `
+              <div class="card error">
+                ❌ ${data.message}
+              </div>
+            `
+
             document.getElementById('confirmBtn').style.display = 'none'
             return
           }
 
           resultDiv.innerHTML = `
-            <p class="ok">✔ ${data.name}</p>
-            <p>${data.type}</p>
+            <div class="card ok">
+              ✔ ${data.name}<br/>
+              🎟️ ${data.type}
+            </div>
           `
 
           document.getElementById('confirmBtn').style.display = 'block'
@@ -54,16 +105,14 @@
 
     const html5QrCode = new Html5Qrcode("reader")
 
-    Html5Qrcode.getCameras().then(devices => {
-      html5QrCode.start(
-        devices[0].id,
-        { fps: 10, qrbox: 250 },
-        onScanSuccess
-      )
-    })
+    html5QrCode.start(
+      { facingMode: "environment" }, // 🔥 câmera traseira
+      { fps: 10, qrbox: 250 },
+      onScanSuccess
+    )
 
     document.getElementById('confirmBtn').onclick = () => {
-      fetch(`${API}/checkin/confirm`, {
+      fetch(`${API}/confirm`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -73,11 +122,27 @@
       })
       .then(res => res.json())
       .then(data => {
+        feedbackSuccess()
+
         document.getElementById('result').innerHTML =
-          `<p class="ok">${data.message}</p>`
+          `<div class="card ok">🔥 Entrada liberada</div>`
 
         document.getElementById('confirmBtn').style.display = 'none'
       })
+    }
+
+    function feedbackSuccess() {
+      navigator.vibrate?.(200)
+
+      const audio = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3")
+      audio.play()
+    }
+
+    function feedbackError() {
+      navigator.vibrate?.([100, 50, 100])
+
+      const audio = new Audio("https://www.soundjay.com/buttons/sounds/button-10.mp3")
+      audio.play()
     }
   </script>
 
