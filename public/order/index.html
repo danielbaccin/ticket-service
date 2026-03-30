@@ -181,14 +181,6 @@
     });
     const totalDiv = document.getElementById('total');
 
-  function atualizarTotal() {
-      const tipo = document.querySelector('[name="ticket_type_id"]').value;
-      const qtd = Number(document.querySelector('[name="quantidade"]').value);
-
-      const preco = tipo === '1' ? 50 : 25;
-
-      totalDiv.innerHTML = `Total: R$ ${preco * qtd}`;
-    }
 
     document.querySelector('[name="ticket_type_id"]').addEventListener('change', atualizarTotal);
     document.querySelector('[name="quantidade"]').addEventListener('input', atualizarTotal);
@@ -221,7 +213,6 @@
     });
 
     let ticketTypes = [];
-
     async function loadTicketTypes() {
       const res = await fetch('/api/ticket-types');
       ticketTypes = await res.json();
