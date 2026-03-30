@@ -24,15 +24,17 @@ export async function createOrder(data: any) {
       const code = randomUUID().slice(0, 8)
 
       await client.query(
-        `INSERT INTO tickets (id, event_id, order_id, ticket_type_id, code, holder_name, status)
-         VALUES ($1, $2, $3, $4, $5, $6, 'PENDING')`,
+        `INSERT INTO tickets (id, event_id, order_id, ticket_type_id, code, holder_name, holder_email, holder_phone, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, 'PENDING')`,
         [
           ticketId,
           data.event_id,
           orderId,
           t.ticket_type_id,
           code,
-          t.holder_name
+          t.holder_name,
+          t.holder_email,
+          t.holder_phone
         ]
       )
 

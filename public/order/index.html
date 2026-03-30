@@ -132,6 +132,7 @@
 
         <div id="total" style="margin-bottom: 12px; font-size: 14px;"></div>
 
+        <div id="resumo" style="margin-bottom: 12px; font-size: 13px; color: #9ca3af;"></div>
         <button id="btnSubmit" type="submit">Reservar ingresso</button>
       </form>
 
@@ -219,18 +220,45 @@
       }
     });
 
+    let ticketTypes = [];
+
     async function loadTicketTypes() {
       const res = await fetch('/api/ticket-types');
-      const types = await res.json();
+      ticketTypes = await res.json();
 
       const select = document.querySelector('[name="ticket_type_id"]');
 
-      select.innerHTML = types.map(t => `
-        <option value="${t.id}">${t.name}</option>
+      select.innerHTML = ticketTypes.map(t => `
+        <option value="${t.id}">
+          ${t.name} - R$ ${t.price}
+        </option>
       `).join('');
+
+      atualizarTotal();
     }
 
+    function atualizarTotal() {
+      const tipoId = document.querySelector('[name="ticket_type_id"]').value;
+      const qtd = Number(document.querySelector('[name="quantidade"]').value);
+
+      const tipo = ticketTypes.find(t => t.id === tipoId);
+
+      if (!tipo) return;
+
+      const total = tipo.price * qtd;
+
+      document.getElementById('total').innerHTML =
+        `<strong>Total: R$ ${total}</strong>`;
+    }
+
+    document.querySelector('[name="ticket_type_id"]').addEventListener('change', atualizarTotal);
+    document.querySelector('[name="quantidade"]').addEventListener('input', atualizarTotal);
+
     loadTicketTypes();
+
+    document.getElementById('resumo').innerHTML = `
+      ${qtd}x ${tipo.name}  
+    `;
   </script>
 
 
