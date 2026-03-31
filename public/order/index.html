@@ -181,10 +181,6 @@
     });
     const totalDiv = document.getElementById('total');
 
-
-    document.querySelector('[name="ticket_type_id"]').addEventListener('change', atualizarTotal);
-    document.querySelector('[name="quantidade"]').addEventListener('input', atualizarTotal);
-
     atualizarTotal();
     const btn = document.getElementById('btnSubmit');
 
@@ -212,44 +208,47 @@
       }
     });
 
-    let ticketTypes = [];
-    async function loadTicketTypes() {
-      const res = await fetch('/api/ticket-types');
-      ticketTypes = await res.json();
+   let ticketTypes = [];
 
-      const select = document.querySelector('[name="ticket_type_id"]');
+    window.addEventListener('DOMContentLoaded', () => {
 
-      select.innerHTML = ticketTypes.map(t => `
-        <option value="${t.id}">
-          ${t.name} - R$ ${t.price}
-        </option>
-      `).join('');
+      async function loadTicketTypes() {
+        const res = await fetch('/api/ticket-types');
+        ticketTypes = await res.json();
 
-      atualizarTotal();
-    }
+        const select = document.querySelector('[name="ticket_type_id"]');
 
-    function atualizarTotal() {
-      const tipoId = document.querySelector('[name="ticket_type_id"]').value;
-      const qtd = Number(document.querySelector('[name="quantidade"]').value);
+        select.innerHTML = ticketTypes.map(t => `
+          <option value="${t.id}">
+            ${t.name} - R$ ${t.price}
+          </option>
+        `).join('');
 
-      const tipo = ticketTypes.find(t => t.id === tipoId);
+        atualizarTotal();
+      }
 
-      if (!tipo) return;
+      function atualizarTotal() {
+        const tipoId = document.querySelector('[name="ticket_type_id"]').value;
+        const qtd = Number(document.querySelector('[name="quantidade"]').value);
 
-      const total = tipo.price * qtd;
+        const tipo = ticketTypes.find(t => t.id === tipoId);
 
-      document.getElementById('total').innerHTML =
-        `<strong>Total: R$ ${total}</strong>`;
-    }
+        if (!tipo) return;
 
-    document.querySelector('[name="ticket_type_id"]').addEventListener('change', atualizarTotal);
-    document.querySelector('[name="quantidade"]').addEventListener('input', atualizarTotal);
+        const total = tipo.price * qtd;
 
-    loadTicketTypes();
+        document.getElementById('total').innerHTML =
+          `<strong>Total: R$ ${total}</strong>`;
 
-    document.getElementById('resumo').innerHTML = `
-      ${qtd}x ${tipo.name}  
-    `;
+        document.getElementById('resumo').innerHTML =
+          `${qtd}x ${tipo.name}`;
+      }
+
+      document.querySelector('[name="ticket_type_id"]').addEventListener('change', atualizarTotal);
+      document.querySelector('[name="quantidade"]').addEventListener('input', atualizarTotal);
+
+      loadTicketTypes();
+    });
   </script>
 
 
