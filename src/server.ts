@@ -5,6 +5,8 @@ import { checkinRoutes } from './modules/checkin/checkin.controller'
 import fastifyStatic from '@fastify/static'
 import path from 'path'
 import { ticketTypesRoutes } from './modules/ticket-types/ticket-types.controller'
+import { paymentsRoutes } from './modules/payments/payments.controller'
+
 
 const app = Fastify({ logger: true })
 
@@ -27,6 +29,7 @@ app.register(fastifyStatic, {
   root: path.join(__dirname, '../public'),
 })
 app.register(ticketTypesRoutes, { prefix: '/api/ticket-types' })
+app.register(paymentsRoutes, { prefix: '/api/payments' })
 
 // start
 const start = async () => {
