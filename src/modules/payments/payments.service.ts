@@ -21,6 +21,10 @@ export async function createPixPayment(orderId: string) {
 
   const payment = new Payment(client)
 
+  console.log('TOKEN:', process.env.MP_ACCESS_TOKEN)
+  console.log('EMAIL:', order.buyer_email)
+  console.log('API_URL:', process.env.API_URL)
+
   const response = await payment.create({
     body: {
       transaction_amount: amount,
