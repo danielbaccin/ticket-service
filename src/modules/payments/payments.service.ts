@@ -1,5 +1,5 @@
 import { pool } from '../../db/pool'
-import { MercadoPagoConfig, Payment } from 'mercadopago'
+import { MercadoPagoConfig, Preference } from 'mercadopago'
 
 const client = new MercadoPagoConfig({
   accessToken: process.env.MP_ACCESS_TOKEN!
@@ -19,41 +19,43 @@ export async function createPixPayment(orderId: string) {
 
   const amount = 50 // depois vamos calcular dinâmico
 
-  const payment = new Payment(client)
+  const preference = new Preference(client)
 
   console.log('TOKEN:', process.env.MP_ACCESS_TOKEN)
   console.log('EMAIL:', order.buyer_email)
   console.log('API_URL:', process.env.API_URL)
 
-  const response = await payment.create({
+  const response = await preference.create({
     body: {
-      transaction_amount: amount,
-      description: 'Ingresso evento',
-      payment_method_id: 'pix',
+      items: [
+        {
+          title: 'Ingresso evento',
+          quantity: 1,
+          unit_price: amount
+        }
+      ],
       payer: {
         email: order.buyer_email
       },
-      notification_url: `${process.env.API_URL}/api/webhooks/mercadopago`
-    }
+      notification_url: `${process.env.API_URL}/api/webhooks/mercadopago`,
+      external_reference: orderId
+    } as any
   })
 
   const data = response
 
-  // salva no banco
+  // salva no banco (ajustado)
   await pool.query(
-    `INSERT INTO payments (id, order_id, status, external_id)
-     VALUES ($1, $2, $3, $4)`,
+    `INSERT INTO payments (order_id, status, external_id)
+     VALUES ($1, $2, $3)`,
     [
-      data.id,
       orderId,
-      data.status,
-      data.id
+      'pending',
+      data.id // id da preference
     ]
   )
 
   return {
-    qr_code: data.point_of_interaction?.transaction_data?.qr_code,
-    qr_code_base64:
-      data.point_of_interaction?.transaction_data?.qr_code_base64
+    checkout_url: data.init_point
   }
 }
