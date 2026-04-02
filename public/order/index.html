@@ -190,20 +190,39 @@
       btn.disabled = true;
 
       try {
-        const res = await fetch('/api/orders', {
+        // 1. cria o pedido
+        const orderRes = await fetch('/api/orders', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(data)
         });
 
-        if (!res.ok) throw new Error();
+        if (!orderRes.ok) throw new Error('Erro ao criar pedido');
 
-        window.location.href = '/sucesso.html';
+        const order = await orderRes.json();
+
+        // 🔥 IMPORTANTE: precisa retornar o id do pedido
+        const orderId = order.id;
+
+        // 2. cria o pagamento (checkout pro)
+        const paymentRes = await fetch('/api/payments/pix', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId })
+        });
+
+        if (!paymentRes.ok) throw new Error('Erro ao gerar pagamento');
+
+        const payment = await paymentRes.json();
+
+        // 3. redireciona pro Mercado Pago
+        window.location.href = payment.checkout_url;
 
       } catch (err) {
+        console.error(err);
         btn.innerText = 'Reservar ingresso';
         btn.disabled = false;
-        msg.innerHTML = '<div class="error">Erro ao criar pedido</div>';
+        msg.innerHTML = '<div class="error">Erro ao processar pagamento</div>';
       }
     });
 

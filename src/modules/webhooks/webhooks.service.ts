@@ -18,14 +18,15 @@ export async function handleMercadoPagoWebhook(body: any) {
   console.log('Consultando pagamento:', paymentId)
 
   // consulta o pagamento na API
-  const response = await axios.get(
-    `https://api.mercadopago.com/v1/payments/${paymentId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`
+  try {
+    const response = await axios.get(
+      `https://api.mercadopago.com/v1/payments/${paymentId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`
+        }
       }
-    }
-  )
+    )
 
   const payment = response.data
 
@@ -37,6 +38,8 @@ export async function handleMercadoPagoWebhook(body: any) {
     console.log('Sem external_reference')
     return
   }
+
+
 
   // atualiza pagamento no banco
   await pool.query(
@@ -56,5 +59,15 @@ export async function handleMercadoPagoWebhook(body: any) {
     )
 
     console.log('✅ Pedido pago:', orderId)
+  }
+
+
+  } catch (error: any) {
+    if (error.response?.status === 404) {
+      console.log('⚠️ Payment não encontrado (simulador ou teste)')
+      return
+    }
+
+    throw error
   }
 }
