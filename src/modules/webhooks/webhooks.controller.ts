@@ -1,15 +1,18 @@
-import { Request, Response } from 'express'
+import { FastifyRequest, FastifyReply } from 'fastify'
 import { handleMercadoPagoWebhook } from './webhooks.service'
 
-export async function mercadopagoWebhook(req: Request, res: Response) {
+export async function mercadopagoWebhook(
+  request: FastifyRequest,
+  reply: FastifyReply
+) {
   try {
-    console.log('Webhook recebido:', req.body)
+    console.log('Webhook recebido:', request.body)
 
-    await handleMercadoPagoWebhook(req.body)
+    await handleMercadoPagoWebhook(request.body)
 
-    res.sendStatus(200)
+    reply.status(200).send()
   } catch (error) {
     console.error('Erro no webhook:', error)
-    res.sendStatus(500)
+    reply.status(500).send()
   }
 }
