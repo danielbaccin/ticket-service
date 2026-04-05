@@ -188,6 +188,7 @@
 
       btn.innerText = 'Processando...';
       btn.disabled = true;
+      console.log('Formulário enviado, processando pedido...');
 
       try {
         // 1. cria o pedido
@@ -203,6 +204,7 @@
 
         // 🔥 IMPORTANTE: precisa retornar o id do pedido
         const orderId = order.id;
+        console.log('IMPORTANTE: Pedido criado:', orderId);
 
         // 2. cria o pagamento (checkout pro)
         const paymentRes = await fetch('/api/payments/pix', {
@@ -210,10 +212,14 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderId })
         });
+        console.log('Gerando pagamento para pedido:', orderId);
+        console.log('Resposta do pagamento:', paymentRes);
 
         if (!paymentRes.ok) throw new Error('Erro ao gerar pagamento');
 
         const payment = await paymentRes.json();
+        console.log('Pagamento gerado:', payment);
+        console.log('Checkout URL:', payment.checkout_url);
 
         // 3. redireciona pro Mercado Pago
         window.location.href = payment.checkout_url;

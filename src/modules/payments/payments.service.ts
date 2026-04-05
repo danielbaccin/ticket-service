@@ -6,6 +6,9 @@ const client = new MercadoPagoConfig({
 })
 
 export async function createPixPayment(orderId: string) {
+  
+  console.log('Criando pagamento para orderId:', orderId)
+
   const orderRes = await pool.query(
     `SELECT * FROM orders WHERE id = $1`,
     [orderId]
@@ -17,6 +20,8 @@ export async function createPixPayment(orderId: string) {
     throw new Error('Order não encontrada')
   }
 
+  console.log('Order encontrada:', order)
+
   const amount = 50 // depois vamos calcular dinâmico
 
   const preference = new Preference(client)
@@ -24,6 +29,8 @@ export async function createPixPayment(orderId: string) {
   console.log('TOKEN:', process.env.MP_ACCESS_TOKEN)
   console.log('EMAIL:', order.buyer_email)
   console.log('API_URL:', process.env.API_URL)
+
+  console.log('Criando preferência de pagamento no Mercado Pago...')
 
   const response = await preference.create({
     body: {
@@ -44,6 +51,8 @@ export async function createPixPayment(orderId: string) {
 
   const data = response
 
+  console.log('Preferência criada:', data)
+
   // salva no banco (ajustado)
   await pool.query(
     `INSERT INTO payments (order_id, status, external_id)
@@ -54,6 +63,7 @@ export async function createPixPayment(orderId: string) {
       data.id // id da preference
     ]
   )
+  console.log('Pagamento salvo no banco com status pending')
 
   return {
     checkout_url: data.init_point
