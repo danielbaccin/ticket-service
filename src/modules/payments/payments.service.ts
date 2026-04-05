@@ -47,11 +47,6 @@ export async function createPixPayment(orderId: string) {
         surname: 'Cliente'
       },
       payment_methods: {
-        excluded_payment_types: [
-          { id: 'credit_card' },
-          { id: 'debit_card' },
-          { id: 'ticket' } // boleto
-        ],
         default_payment_method_id: 'pix'
       },
       notification_url: `${process.env.API_URL}/api/webhooks/mercadopago`,
