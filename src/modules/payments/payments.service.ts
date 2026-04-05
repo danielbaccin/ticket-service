@@ -22,7 +22,7 @@ export async function createPixPayment(orderId: string) {
 
   console.log('Order encontrada:', order)
 
-  const amount = 50 // depois vamos calcular dinâmico
+  const amount = 9 // depois vamos calcular dinâmico
 
   const preference = new Preference(client)
 
@@ -43,6 +43,14 @@ export async function createPixPayment(orderId: string) {
       ],
       payer: {
         email: order.buyer_email
+      },
+      payment_methods: {
+        excluded_payment_types: [
+          { id: 'credit_card' },
+          { id: 'debit_card' },
+          { id: 'ticket' } // boleto
+        ],
+        default_payment_method_id: 'pix'
       },
       notification_url: `${process.env.API_URL}/api/webhooks/mercadopago`,
       external_reference: orderId
