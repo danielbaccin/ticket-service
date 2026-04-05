@@ -43,7 +43,8 @@ export async function createPixPayment(orderId: string) {
       ],
       payer: {
         email: order.buyer_email,
-        name: order.buyer_name
+        name: order.buyer_name,
+        surname: 'Cliente'
       },
       payment_methods: {
         excluded_payment_types: [
