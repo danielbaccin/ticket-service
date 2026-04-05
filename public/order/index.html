@@ -182,7 +182,7 @@
         const order = await orderRes.json();
 
         // ⚠️ precisa garantir que vem isso do backend
-        const orderId = order.id;
+        const orderId = order.orderId;
         console.log('ID do pedido criado:', orderId);
 
         // 2. cria pagamento
@@ -203,7 +203,7 @@
         window.location.href = payment.checkout_url;
 
       } catch (err) {
-        console.error(err);
+       //console.error(err);
         btn.innerText = 'Reservar ingresso';
         btn.disabled = false;
         msg.innerHTML = '<div class="error">Erro ao processar pagamento</div>';
