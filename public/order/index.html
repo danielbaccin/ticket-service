@@ -150,8 +150,11 @@
       e.preventDefault();
 
       msg.innerHTML = '';
+      btn.innerText = 'Processando...';
+      btn.disabled = true;
 
       const formData = new FormData(form);
+      console.log('FormData:', Object.fromEntries(formData.entries()));
 
       const data = {
         event_id: "11111111-1111-1111-1111-111111111111",
@@ -162,36 +165,10 @@
           holder_name: formData.get('buyer_name')
         }))
       };
+      console.log('Data to send:', data);
 
       try {
-        const res = await fetch('/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
-        });
-
-        if (!res.ok) throw new Error();
-
-        msg.innerHTML = '<div class="success">Ingresso reservado com sucesso 🎉</div>';
-        window.location.href = '/sucesso.html';
-
-      } catch (err) {
-        msg.innerHTML = '<div class="error">Erro ao criar pedido</div>';
-      }
-    });
-    const totalDiv = document.getElementById('total');
-
-    const btn = document.getElementById('btnSubmit');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      btn.innerText = 'Processando...';
-      btn.disabled = true;
-      console.log('Formulário enviado, processando pedido...');
-
-      try {
-        // 1. cria o pedido
+        // 1. cria pedido
         const orderRes = await fetch('/api/orders', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -199,29 +176,29 @@
         });
 
         if (!orderRes.ok) throw new Error('Erro ao criar pedido');
+        console.log('Pedido criado com sucesso, processando resposta...');
 
         const order = await orderRes.json();
 
-        // 🔥 IMPORTANTE: precisa retornar o id do pedido
+        // ⚠️ precisa garantir que vem isso do backend
         const orderId = order.id;
-        console.log('IMPORTANTE: Pedido criado:', orderId);
+        console.log('ID do pedido criado:', orderId);
 
-        // 2. cria o pagamento (checkout pro)
+        // 2. cria pagamento
         const paymentRes = await fetch('/api/payments/pix', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ orderId })
         });
-        console.log('Gerando pagamento para pedido:', orderId);
-        console.log('Resposta do pagamento:', paymentRes);
 
         if (!paymentRes.ok) throw new Error('Erro ao gerar pagamento');
+        console.log('Pagamento gerado com sucesso, processando resposta...');
 
         const payment = await paymentRes.json();
-        console.log('Pagamento gerado:', payment);
-        console.log('Checkout URL:', payment.checkout_url);
 
-        // 3. redireciona pro Mercado Pago
+        console.log('payment:', payment);
+
+        // 3. redirect
         window.location.href = payment.checkout_url;
 
       } catch (err) {
