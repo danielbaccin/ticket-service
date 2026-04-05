@@ -200,7 +200,7 @@
         console.log('payment:', payment);
 
         // 3. redirect
-        window.location.href = payment.init_point;
+        window.open(payment.checkout_url, '_blank');
 
       } catch (err) {
        //console.error(err);
