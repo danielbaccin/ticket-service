@@ -22,7 +22,7 @@ export async function createPixPayment(orderId: string) {
 
   console.log('Order encontrada:', order)
 
-  const amount = 9 // depois vamos calcular dinâmico
+  const amount = 20 // depois vamos calcular dinâmico
 
   const preference = new Preference(client)
 
@@ -42,7 +42,8 @@ export async function createPixPayment(orderId: string) {
         }
       ],
       payer: {
-        email: order.buyer_email
+        email: order.buyer_email,
+        name: order.buyer_name
       },
       payment_methods: {
         excluded_payment_types: [
