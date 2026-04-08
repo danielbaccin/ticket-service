@@ -73,7 +73,7 @@ export async function createPixPayment(orderId: string) {
   return {
     checkout_url:
       process.env.NODE_ENV === 'production'
-        ? response.init_point
-        : response.sandbox_init_point
+        ? data.init_point
+        : data.sandbox_init_point
   }
 }
