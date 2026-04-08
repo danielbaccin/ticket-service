@@ -41,11 +41,11 @@ export async function createPixPayment(orderId: string) {
           unit_price: amount
         }
       ],
-      // payer: {
-      //   email: order.buyer_email,
-      //   name: order.buyer_name,
-      //   surname: 'Cliente'
-      // },
+      payer: {
+        email: order.buyer_email,
+        name: order.buyer_name,
+        surname: 'Daniel Baccin'
+      },
       notification_url: `${process.env.API_URL}/api/webhooks/mercadopago`,
       external_reference: orderId
     } as any
