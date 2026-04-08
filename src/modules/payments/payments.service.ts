@@ -46,9 +46,6 @@ export async function createPixPayment(orderId: string) {
         name: order.buyer_name,
         surname: 'Cliente'
       },
-      payment_methods: {
-        default_payment_method_id: 'pix'
-      },
       notification_url: `${process.env.API_URL}/api/webhooks/mercadopago`,
       external_reference: orderId
     } as any
