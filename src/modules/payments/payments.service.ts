@@ -68,9 +68,8 @@ export async function createPixPayment(orderId: string) {
   console.log('Pagamento salvo no banco com status pending')
 
   return {
-    checkout_url:
-      process.env.NODE_ENV === 'production'
-        ? data.init_point
-        : data.sandbox_init_point
+    id: data.id,
+    init_point: data.init_point,
+    checkout_url: data.init_point
   }
 }
