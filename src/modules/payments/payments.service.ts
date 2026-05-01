@@ -22,7 +22,20 @@ export async function createPixPayment(orderId: string) {
 
   console.log('Order encontrada:', order)
 
-  const amount = 20 // depois vamos calcular dinâmico
+  const totalRes = await pool.query(`
+    SELECT SUM(tt.price) as total
+    FROM tickets t
+    JOIN ticket_types tt ON tt.id = t.ticket_type_id
+    WHERE t.order_id = $1
+  `, [orderId])
+
+  const amount = parseFloat(totalRes.rows[0].total || 0)
+
+  if (amount <= 0) {
+    throw new Error('Valor do pedido inválido')
+  }
+
+  console.log('Valor total calculado:', amount)
 
   const preference = new Preference(client)
 
