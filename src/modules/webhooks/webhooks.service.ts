@@ -1,6 +1,7 @@
 import { pool } from '../../db/pool'
 import axios from 'axios'
 import { generateTicketQRCode } from '../tickets/ticket.service'
+import { sendTicketEmail } from '../notifications/email.service'
 
 export async function handleMercadoPagoWebhook(body: any) {
   try {
@@ -64,7 +65,6 @@ export async function handleMercadoPagoWebhook(body: any) {
 
     // 5. se aprovado → libera pedido
     if (status === 'approved') {
-
       const qrCode = await generateTicketQRCode(orderId)
 
       await pool.query(
@@ -75,6 +75,12 @@ export async function handleMercadoPagoWebhook(body: any) {
       )
 
       console.log('✅ Pedido pago:', orderId)
+
+      const email = payment.payer.email
+
+      await sendTicketEmail(email, qrCode)
+
+      console.log('📩 Email enviado:', email)
     }
 
   } catch (error: any) {
