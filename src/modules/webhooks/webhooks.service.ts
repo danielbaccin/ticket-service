@@ -6,6 +6,11 @@ import { sendTicketEmail } from '../notifications/email.service'
 export async function handleMercadoPagoWebhook(body: any) {
   try {
     // 1. só processa pagamento
+   if (!body.type) {
+      console.log('⚠️ Webhook sem tipo:', body)
+      return
+    }
+
     if (body.type !== 'payment') {
       console.log('Evento ignorado:', body.type)
       return
@@ -76,7 +81,18 @@ export async function handleMercadoPagoWebhook(body: any) {
 
       console.log('✅ Pedido pago:', orderId)
 
-      const email = payment.payer.email
+
+      const orderRes = await pool.query(
+        'SELECT buyer_email FROM orders WHERE id = $1',
+        [orderId]
+      )
+
+      const email = orderRes.rows[0]?.buyer_email
+
+      if (!email) {
+        console.log('⚠️ Email não encontrado no pedido')
+        return
+      }
 
       await sendTicketEmail(email, qrCode)
 
