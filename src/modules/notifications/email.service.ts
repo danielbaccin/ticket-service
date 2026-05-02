@@ -10,16 +10,21 @@ const transporter = nodemailer.createTransport({
 
 export async function sendTicketEmail(
   to: string,
-  qrCode: string
+  pdfBuffer: Buffer
 ) {
   await transporter.sendMail({
-    from: `"Ingressos" <${process.env.EMAIL_USER}>`,
+    from: `"KenuiWorks 🎟️" <${process.env.EMAIL_USER}>`,
     to,
     subject: 'Seu ingresso 🎟️',
     html: `
       <h2>Pagamento confirmado!</h2>
-      <p>Apresente este QR Code na entrada:</p>
-      <img src="${qrCode}" style="width:200px;height:200px;" />
-    `
+      <p>Seu ingresso está em anexo.</p>
+    `,
+    attachments: [
+      {
+        filename: 'ingresso.pdf',
+        content: pdfBuffer
+      }
+    ]
   })
 }
