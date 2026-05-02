@@ -10,9 +10,10 @@ export async function mercadopagoWebhook(
 
     await handleMercadoPagoWebhook(request.body)
 
-    reply.status(200).send()
   } catch (error) {
     console.error('Erro no webhook:', error)
-    reply.status(500).send()
   }
+
+  // 🔥 SEMPRE responde 200
+  reply.status(200).send()
 }
