@@ -1,5 +1,6 @@
 import { pool } from '../../db/pool'
 import axios from 'axios'
+import { generateTicketQRCode } from '../tickets/ticket.service'
 
 export async function handleMercadoPagoWebhook(body: any) {
   try {
@@ -63,11 +64,14 @@ export async function handleMercadoPagoWebhook(body: any) {
 
     // 5. se aprovado → libera pedido
     if (status === 'approved') {
+
+      const qrCode = await generateTicketQRCode(orderId)
+
       await pool.query(
         `UPDATE orders
-         SET status = 'paid', updated_at = NOW()
-         WHERE id = $1`,
-        [orderId]
+        SET status = 'paid', qr_code = $1, updated_at = NOW()
+        WHERE id = $2`,
+        [qrCode, orderId]
       )
 
       console.log('✅ Pedido pago:', orderId)
