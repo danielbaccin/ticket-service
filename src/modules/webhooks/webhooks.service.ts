@@ -69,7 +69,7 @@ export async function handleMercadoPagoWebhook(body: any) {
 
       await pool.query(
         `UPDATE orders
-        SET status = 'paid', qr_code = $1, updated_at = NOW()
+        SET status = 'PAID', qr_code = $1, updated_at = NOW()
         WHERE id = $2`,
         [qrCode, orderId]
       )
