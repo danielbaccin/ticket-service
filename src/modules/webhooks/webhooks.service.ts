@@ -2,6 +2,8 @@ import { pool } from '../../db/pool'
 import axios from 'axios'
 import { generateTicketQRCode } from '../tickets/ticket.service'
 import { sendTicketEmail } from '../notifications/email.service'
+import { generateTicketPDF } from '../tickets/ticketPdf.service'
+
 
 export async function handleMercadoPagoWebhook(body: any) {
   try {
@@ -94,7 +96,9 @@ export async function handleMercadoPagoWebhook(body: any) {
         return
       }
 
-      await sendTicketEmail(email, qrCode)
+      const pdf = await generateTicketPDF(orderId)
+
+      await sendTicketEmail(email, pdf)
 
       console.log('📩 Email enviado:', email)
     }
