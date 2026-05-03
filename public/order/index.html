@@ -134,6 +134,7 @@
 
         <div id="resumo" style="margin-bottom: 12px; font-size: 13px; color: #9ca3af;"></div>
         <button id="btnSubmit" type="submit">Reservar ingresso</button>
+        <div id="statusText"></div>
         <button onclick="checkNow()">Já paguei</button>
       </form>
 
@@ -147,6 +148,7 @@
     const form = document.getElementById('formVenda');
     const msg = document.getElementById('msg');
     const btn = document.getElementById('btnSubmit');
+    const statusText = document.getElementById('statusText');
 
     async function checkNow() {
       const res = await fetch(`/api/orders/${orderId}`)
@@ -190,6 +192,10 @@
 
         // ⚠️ precisa garantir que vem isso do backend
         const orderId = order.orderId;
+        orderId = order.orderId; // para garantir que é global
+
+        startPolling();
+        
         console.log('ID do pedido criado:', orderId);
 
         // 2. cria pagamento
@@ -259,10 +265,15 @@
       loadTicketTypes();
     });
 
-    let attempts = 0
-      const maxAttempts = 40 // ~2 minutos
+    let interval = null;
 
-      const interval = setInterval(async () => {
+    function startPolling() {
+      let attempts = 0
+      const maxAttempts = 40
+
+      interval = setInterval(async () => {
+        if (!orderId) return; // proteção
+
         attempts++
 
         const res = await fetch(`/api/orders/${orderId}`)
@@ -279,7 +290,8 @@
           showFallback()
         }
 
-      }, 3000);
+      }, 3000)
+    }
 
     function updateUI(data) {
       if (data.status === 'pending') {
