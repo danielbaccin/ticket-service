@@ -134,6 +134,7 @@
 
         <div id="resumo" style="margin-bottom: 12px; font-size: 13px; color: #9ca3af;"></div>
         <button id="btnSubmit" type="submit">Reservar ingresso</button>
+        <button onclick="checkNow()">Já paguei</button>
       </form>
 
       <div id="msg"></div>
@@ -146,6 +147,12 @@
     const form = document.getElementById('formVenda');
     const msg = document.getElementById('msg');
     const btn = document.getElementById('btnSubmit');
+
+    async function checkNow() {
+      const res = await fetch(`/api/orders/${orderId}`)
+      const data = await res.json()
+      updateUI(data)
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -251,5 +258,40 @@
 
       loadTicketTypes();
     });
+
+    let attempts = 0
+      const maxAttempts = 40 // ~2 minutos
+
+      const interval = setInterval(async () => {
+        attempts++
+
+        const res = await fetch(`/api/orders/${orderId}`)
+        const data = await res.json()
+
+        updateUI(data)
+
+        if (data.status === 'approved') {
+          clearInterval(interval)
+        }
+
+        if (attempts >= maxAttempts) {
+          clearInterval(interval)
+          showFallback()
+        }
+
+      }, 3000);
+
+    function updateUI(data) {
+      if (data.status === 'pending') {
+        statusText.innerText = 'Aguardando pagamento...'
+      } else if (data.status === 'approved') {
+        statusText.innerText = 'Pagamento confirmado 🎉 Gerando ingressos...'
+      } else if (data.status === 'canceled') {
+        statusText.innerText = 'Pagamento cancelado. Tente novamente.'
+      }
+    }
+    function showFallback() {
+      statusText.innerText = 'Ainda não confirmado. Verifique seu email 📩'
+    }
   </script>
 </html>

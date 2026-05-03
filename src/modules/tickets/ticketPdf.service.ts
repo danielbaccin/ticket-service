@@ -13,7 +13,7 @@ export async function generateTicketPDF(orderId: string) {
     doc
       .fontSize(22)
       .fillColor('#111')
-      .text('🎟️ KenuiWorks', { align: 'center' })
+      .text('KenuiWorks', { align: 'center' })
 
     doc.moveDown(0.5)
 
