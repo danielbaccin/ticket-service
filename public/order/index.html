@@ -191,7 +191,6 @@
         const order = await orderRes.json();
 
         // ⚠️ precisa garantir que vem isso do backend
-        const orderId = order.orderId;
         orderId = order.orderId; // para garantir que é global
 
         startPolling();
