@@ -280,7 +280,7 @@
 
         updateUI(data)
 
-        if (data.status === 'approved') {
+        if (data.status === 'PAID') {
           clearInterval(interval)
         }
 
@@ -293,11 +293,12 @@
     }
 
     function updateUI(data) {
-      if (data.status === 'pending') {
+      if (data.status === 'PENDING') {
         statusText.innerText = 'Aguardando pagamento...'
-      } else if (data.status === 'approved') {
+      } else if (data.status === 'PAID') {
         statusText.innerText = 'Pagamento confirmado 🎉 Gerando ingressos...'
-      } else if (data.status === 'canceled') {
+        clearInterval(interval)
+      } else if (data.status === 'CANCELED') {
         statusText.innerText = 'Pagamento cancelado. Tente novamente.'
       }
     }
