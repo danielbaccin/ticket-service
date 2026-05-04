@@ -7,6 +7,7 @@ import path from 'path'
 import { ticketTypesRoutes } from './modules/ticket-types/ticket-types.controller'
 import { paymentsRoutes } from './modules/payments/payments.controller'
 import { mercadopagoWebhook } from './modules/webhooks/webhooks.controller'
+import { getOrderById } from './modules/orders/orders.controller'
 
 
 const app = Fastify({ logger: true })
@@ -32,6 +33,7 @@ app.register(fastifyStatic, {
 app.register(ticketTypesRoutes, { prefix: '/api/ticket-types' })
 app.register(paymentsRoutes, { prefix: '/api/payments' })
 app.post('/api/webhooks/mercadopago', mercadopagoWebhook)
+app.get('/api/orders/:id', getOrderById)
 
 
 
