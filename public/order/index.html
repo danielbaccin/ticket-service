@@ -229,6 +229,28 @@
       updateUI(data)
     }
 
+    function renderSuccess() {
+      // limpa loading
+      statusBox.innerHTML = ''
+      statusText.innerText
+
+      // muda botão
+      btn.innerHTML = 'Pagamento confirmado ✅'
+      btn.disabled = true
+      btn.style.background = '#16a34a'
+
+      // mostra sucesso bonito
+      statusBox.innerHTML = `
+        <div class="success-check">🎉</div>
+        <div style="font-size:18px; margin-top:8px;">
+          Pagamento confirmado!
+        </div>
+        <div class="status-text">
+          Seu ingresso foi enviado por email 🎟️
+        </div>
+      `
+    }
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -354,10 +376,6 @@
 
         updateUI(data)
 
-        if (data.status === 'PAID') {
-          clearInterval(interval)
-        }
-
         if (attempts >= maxAttempts) {
           clearInterval(interval)
           showFallback()
@@ -370,8 +388,8 @@
       if (data.status === 'PENDING') {
         statusText.innerText = 'Aguardando pagamento...'
       } else if (data.status === 'PAID') {
-        statusText.innerText = 'Pagamento confirmado 🎉 Gerando ingressos...'
-        clearInterval(interval)
+         clearInterval(interval)
+         renderSuccess()
       } else if (data.status === 'CANCELED') {
         statusText.innerText = 'Pagamento cancelado. Tente novamente.'
       }
