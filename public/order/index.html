@@ -385,9 +385,7 @@
     }
 
     function updateUI(data) {
-      if (data.status === 'PENDING') {
-        statusText.innerText = 'Aguardando pagamento...'
-      } else if (data.status === 'PAID') {
+      if (data.status === 'PAID') {
          clearInterval(interval)
          renderSuccess()
       } else if (data.status === 'CANCELED') {

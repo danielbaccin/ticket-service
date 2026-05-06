@@ -80,9 +80,15 @@ export async function handleMercadoPagoWebhook(body: any) {
         WHERE id = $2`,
         [qrCode, orderId]
       )
-
       console.log('✅ Pedido pago:', orderId)
 
+      await pool.query(
+        `UPDATE tickets
+        SET status = 'VALID'
+        WHERE order_id = $1`,
+        [orderId]
+      )
+      console.log('✅ Ingressos liberados para uso:', orderId)
 
       const orderRes = await pool.query(
         'SELECT buyer_email FROM orders WHERE id = $1',
