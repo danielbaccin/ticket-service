@@ -8,9 +8,12 @@ import { ticketTypesRoutes } from './modules/ticket-types/ticket-types.controlle
 import { paymentsRoutes } from './modules/payments/payments.controller'
 import { mercadopagoWebhook } from './modules/webhooks/webhooks.controller'
 import { getOrderById } from './modules/orders/orders.controller'
+import { dashboardRoutes } from './modules/admin/dashboard.routes'
 
 
 const app = Fastify({ logger: true })
+
+console.log(app.printRoutes())
 
 // rota raiz (boa prática manter)
 app.get('/', async () => {
@@ -27,6 +30,7 @@ app.get('/health/db', async () => {
 // rotas principais
 app.register(orderRoutes, { prefix: '/api/orders' })
 app.register(checkinRoutes, { prefix: '/api/checkin' })
+app.register(dashboardRoutes, {prefix: '/admin'})
 app.register(fastifyStatic, {
   root: path.join(__dirname, '../public'),
 })
