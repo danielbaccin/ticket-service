@@ -6,13 +6,14 @@ export async function getDashboardData(eventId: string) {
     `
     SELECT 
       COUNT(DISTINCT o.id) as total_orders,
-      COALESCE(SUM(o.amount), 0) as total_revenue,
+      COALESCE(SUM(o.total_amount), 0) as total_revenue,
       COUNT(t.id) as total_tickets,
-      COUNT(t.checked_in_at) as total_checkins
+      COUNT(c.checked_in_at) as total_checkins
     FROM orders o
     LEFT JOIN tickets t ON t.order_id = o.id
+    LEFT JOIN checkins c ON c.ticket_id = t.id
     WHERE o.event_id = $1
-    AND o.status = 'paid'
+    AND o.status = 'PAID'
     `,
     [eventId]
   )
@@ -33,10 +34,10 @@ export async function getDashboardData(eventId: string) {
     SELECT 
       DATE(o.created_at) as date,
       COUNT(o.id) as orders,
-      COALESCE(SUM(o.amount), 0) as revenue
+      COALESCE(SUM(o.total_amount), 0) as revenue
     FROM orders o
     WHERE o.event_id = $1
-    AND o.status = 'paid'
+    AND o.status = 'PAID'
     GROUP BY DATE(o.created_at)
     ORDER BY date ASC
     `,
@@ -49,7 +50,7 @@ export async function getDashboardData(eventId: string) {
     SELECT 
       o.id,
       o.buyer_name,
-      o.amount,
+      o.total_amount as amount,
       o.status,
       o.created_at
     FROM orders o
