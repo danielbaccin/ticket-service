@@ -8,7 +8,7 @@ export async function getDashboardData(eventId: string) {
       COUNT(DISTINCT o.id) as total_orders,
       COALESCE(SUM(o.total_amount), 0) as total_revenue,
       COUNT(t.id) as total_tickets,
-      COUNT(c.checked_in_at) as total_checkins
+      COUNT(c.checked_at) as total_checkins
     FROM orders o
     LEFT JOIN tickets t ON t.order_id = o.id
     LEFT JOIN checkins c ON c.ticket_id = t.id
