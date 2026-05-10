@@ -11,7 +11,6 @@ import { getOrderById } from './modules/orders/orders.controller'
 import { dashboardRoutes } from './modules/admin/dashboard.routes'
 import cors from '@fastify/cors'
 
-
 const app = Fastify({ logger: true })
 
 // start
@@ -43,7 +42,9 @@ const start = async () => {
     app.register(paymentsRoutes, { prefix: '/api/payments' })
     app.post('/api/webhooks/mercadopago', mercadopagoWebhook)
     app.get('/api/orders/:id', getOrderById)
-    app.get('/api/admin/dashboard/:eventId', dashboardRoutes)
+    app.register(dashboardRoutes, {
+      prefix: '/api/admin'
+    })
 
 
     const port = Number(process.env.PORT) || 3000
