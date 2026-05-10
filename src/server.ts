@@ -14,40 +14,38 @@ import cors from '@fastify/cors'
 
 const app = Fastify({ logger: true })
 
-app.register(cors, {
-  origin: true
-})
-
-// rota raiz (boa prática manter)
-app.get('/', async () => {
-  return { ok: true }
-})
-
-// health com banco
-app.get('/health', async () => ({ ok: true }))
-app.get('/health/db', async () => {
-  const result = await pool.query('SELECT 1')
-  return { db: result.rows }
-})
-
-// rotas principais
-app.register(orderRoutes, { prefix: '/api/orders' })
-app.register(checkinRoutes, { prefix: '/api/checkin' })
-app.register(fastifyStatic, {
-  root: path.join(__dirname, '../public'),
-})
-app.register(ticketTypesRoutes, { prefix: '/api/ticket-types' })
-app.register(paymentsRoutes, { prefix: '/api/payments' })
-app.post('/api/webhooks/mercadopago', mercadopagoWebhook)
-app.get('/api/orders/:id', getOrderById)
-app.get('/api/admin/dashboard/:eventId', dashboardRoutes)
-
-
-
 // start
 const start = async () => {
   try {
-    
+    await app.register(cors, {
+      origin: true
+    })
+
+    // rota raiz (boa prática manter)
+    app.get('/', async () => {
+      return { ok: true }
+    })
+
+    // health com banco
+    app.get('/health', async () => ({ ok: true }))
+    app.get('/health/db', async () => {
+      const result = await pool.query('SELECT 1')
+      return { db: result.rows }
+    })
+
+    // rotas principais
+    app.register(orderRoutes, { prefix: '/api/orders' })
+    app.register(checkinRoutes, { prefix: '/api/checkin' })
+    app.register(fastifyStatic, {
+      root: path.join(__dirname, '../public'),
+    })
+    app.register(ticketTypesRoutes, { prefix: '/api/ticket-types' })
+    app.register(paymentsRoutes, { prefix: '/api/payments' })
+    app.post('/api/webhooks/mercadopago', mercadopagoWebhook)
+    app.get('/api/orders/:id', getOrderById)
+    app.get('/api/admin/dashboard/:eventId', dashboardRoutes)
+
+
     const port = Number(process.env.PORT) || 3000
 
     await app.listen({
