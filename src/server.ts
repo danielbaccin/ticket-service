@@ -12,6 +12,7 @@ import { ticketTypesRoutes } from './modules/ticket-types/ticket-types.controlle
 import { paymentsRoutes } from './modules/payments/payments.controller'
 import { mercadopagoWebhook } from './modules/webhooks/webhooks.controller'
 import { dashboardRoutes } from './modules/admin/dashboard.routes'
+import { eventsRoutes } from './modules/events/events.routes'
 
 const app = Fastify({
   logger: {
@@ -78,6 +79,10 @@ const start = async () => {
 
     app.register(fastifyStatic, {
       root: path.join(__dirname, '../public')
+    })
+
+    app.register(eventsRoutes, {
+      prefix: '/api/events'
     })
 
     console.log(app.printRoutes())
