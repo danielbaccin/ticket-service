@@ -60,9 +60,9 @@ export async function createPixPayment(orderId: string) {
         surname: 'Daniel Baccin'
       },
       back_urls: {
-        success: `${process.env.FRONT_URL}/api/order/${orderId}`,
-        pending: `${process.env.FRONT_URL}/api/order/${orderId}`,
-        failure: `${process.env.FRONT_URL}/api/order/${orderId}`
+        success: `${process.env.FRONT_URL}/payment/${orderId}`,
+        pending: `${process.env.FRONT_URL}/payment/${orderId}`,
+        failure: `${process.env.FRONT_URL}/payment/${orderId}`
       },
       auto_return: 'approved',
       notification_url: `${process.env.API_URL}/api/webhooks/mercadopago`,
